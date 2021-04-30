@@ -20,12 +20,12 @@ public class Damas{
     }
     
     
-    public void evolucionarDamas(int poblacion, int generaciones,double prob_cruza, double prob_muta) throws CloneNotSupportedException{
-            
-        operador.evolucion(poblacion,generaciones,prob_cruza,prob_muta);
+    public boolean evolucionarDamas(int poblacion, int generaciones,double prob_cruza, double prob_muta,int cantidad_reinas) throws CloneNotSupportedException{
         
-        int[] posiciones = new int[operador.getMejorIndividuo().getGenotipo().length];
-        posiciones = operador.getMejorIndividuo().getGenotipo();
+        operador.setMascara(cantidad_reinas);//Creamos una máscara aleatoria
+        operador.setCantidadReinas(cantidad_reinas);//Seteamos la cantidad de reinas
+        operador.evolucion(poblacion,generaciones,prob_cruza,prob_muta);//Empezamos a evolucionar
+        
         System.out.print("Posiciones reinas: ");
         for(int pos: operador.getMejorIndividuo().getGenotipo()){
             System.out.print(pos);
@@ -33,12 +33,10 @@ public class Damas{
         }
         System.out.println("");
         System.out.println("Fitness:" + operador.getMejorIndividuo().getFitness());
-        if(operador.getMejorIndividuo().getFitness() != 48){
-            System.out.println("Casi!");
-        }else{
-            System.out.println("Mejor individuo alcanzado!");
+        if(operador.getMejorIndividuo().getFitness() != (operador.getMejorIndividuo().getGenotipo().length*6)){
+            return false;
         }
-        System.out.println("");
+        return true;
         
     }
     

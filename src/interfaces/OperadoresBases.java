@@ -19,9 +19,19 @@ public interface OperadoresBases{
     public void generarPoblacionAleatoria(int tamPoblacion);
     public static int[] obtenerGenotipoAleatorio(int max,int numBits){
         int[] genotipo = new int[numBits];
+        for(int posicion = 0; posicion < numBits; posicion++){
+            genotipo[posicion] = -1;
+        }
         Random aleatorio = new Random();
         for(int i = 0; i < genotipo.length;i++){
-            genotipo[i] = aleatorio.nextInt(max);
+            int nuevo = aleatorio.nextInt(max);
+            for(int j=0; j<=i;j++){
+                if(nuevo == genotipo[j]){
+                    nuevo = aleatorio.nextInt(max);
+                    j = -1;
+                }
+            }
+            genotipo[i] = nuevo;
         }
         return genotipo;
     }

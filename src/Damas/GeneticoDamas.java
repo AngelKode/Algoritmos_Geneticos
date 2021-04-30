@@ -25,34 +25,30 @@ public class GeneticoDamas implements GeneticoBases,Cloneable{
     
     @Override
     public void obtenerFitness() {
-         //Evaluamos el fenotipo
-        this.fitness = 48;
+        //Multiplicamos la cantidad de reinas * 6, ya que es el máximo de ataques
+        this.fitness = this.genotipo.length * 6;
         //Recorremos todas las reinas
-        for(int posicionGenotipo = 0; posicionGenotipo < this.genotipo.length;posicionGenotipo++){
-            /*
-            Evaluamos la reina en la posicion 'posicionGenotipo' con la reina en la posicion
-            'posiciones_reinas'
-            */
-            for(int posiciones_reinas = 0;posiciones_reinas < this.genotipo.length;posiciones_reinas++){
+        for(int reina_actual = 0; reina_actual < this.genotipo.length;reina_actual++){
+            //Evaluamos la reina en la posicion 'posicionGenotipo' con las demás reinas
+            for(int reina_comparar = 0;reina_comparar < this.genotipo.length;reina_comparar++){
                 //Verificamos que no sea la comparacion entre la misma reina para evitar errores
-                if(posicionGenotipo != posiciones_reinas){
+                if(reina_actual != reina_comparar){
                     //Comparamos si la reina actual está al mismo nivel que la reina que estamos comparando
                     //Si es asi, se atacan horizontalmente
-                    if(this.genotipo[posicionGenotipo] == this.genotipo[posiciones_reinas]){
+                    if(this.genotipo[reina_actual] == this.genotipo[reina_comparar]){
                             //Restamos 1 por tener un ataque
                             this.fitness--;
                     }
-                    
-                    int distancia_entre_ellas = posicionGenotipo - posiciones_reinas;
+                    //Obtenemos la distancia entre las 2 reinas que se están comparando
+                    int distancia_entre_ellas = reina_actual - reina_comparar;
                     //Si es negativo, lo convertimos a positivo
                     distancia_entre_ellas = (distancia_entre_ellas < 0) ? distancia_entre_ellas * -1 : distancia_entre_ellas;
-                    //Ahora checamos si la posicion de la reina actual se cruza diagonalmente
-                    //con las demas reinas
                     
-                    if(this.genotipo[posiciones_reinas] == (this.genotipo[posicionGenotipo] - distancia_entre_ellas)){
+                    //Ahora checamos si la posicion de la reina actual se cruza diagonalmente con las demas reinas
+                    if(this.genotipo[reina_comparar] == (this.genotipo[reina_actual] - distancia_entre_ellas)){
                         //Verificamos la diagonal superior hacia la izquierda o a la derecha
                         this.fitness--;
-                    }else if(this.genotipo[posiciones_reinas] == (this.genotipo[posicionGenotipo] + distancia_entre_ellas)){
+                    }else if(this.genotipo[reina_comparar] == (this.genotipo[reina_actual] + distancia_entre_ellas)){
                         //Verificamos la diagonal inferior hacia la izquierda o a la derecha
                         this.fitness--;
                     }

@@ -18,12 +18,15 @@ import java.util.Random;
 public class OperadoresDamas implements OperadoresBases{
     
     private final ArrayList<GeneticoDamas> individuos;
-    private final int[] mascara = new int[]{1,0,1,0,1,0,1,0};
+    private int[] mascara;
     private int individuoEscogido;
+    private int cantidad_reinas;
 
     public OperadoresDamas() {
         this.individuos = new ArrayList<>();
         this.individuoEscogido = 0;
+        this.cantidad_reinas = 0;
+        this.mascara = null;
     }
 
     @Override
@@ -81,7 +84,7 @@ public class OperadoresDamas implements OperadoresBases{
 
     @Override
     public void evolucion(int poblacion, int generaciones, double probabilidad_cruza, double probabilidad_muta) throws CloneNotSupportedException {
-         generarPoblacionAleatoria(poblacion);//Generamos poblaciones aleatorias
+        generarPoblacionAleatoria(poblacion);//Generamos poblaciones aleatorias
         
         for(int numGeneracion = 0;numGeneracion < generaciones;numGeneracion++){
             GeneticoDamas[] nueva_poblacion = new GeneticoDamas[poblacion];//La siguiente generacion
@@ -104,7 +107,7 @@ public class OperadoresDamas implements OperadoresBases{
                 
                 //Una vez teniendo al hijo, vemos si muta o no
                 if(probabilidadMuta(probabilidad_muta)){
-                    muta(hijo,8);
+                    muta(hijo,this.mascara.length);
                 }
                 
                 //Agregamos al hijo
@@ -133,7 +136,7 @@ public class OperadoresDamas implements OperadoresBases{
     public void generarPoblacionAleatoria(int tamPoblacion) {
         this.individuos.clear();
         for(int i = 0; i < tamPoblacion; i++){
-            this.individuos.add(new GeneticoDamas(obtenerGenotipoAleatorio(8,8)));
+            this.individuos.add(new GeneticoDamas(obtenerGenotipoAleatorio(this.cantidad_reinas,this.cantidad_reinas)));
         }
     }
 
@@ -152,6 +155,18 @@ public class OperadoresDamas implements OperadoresBases{
         }
        
         return individuoEscogido;
+    }
+    
+    public void setCantidadReinas(int cantidad){
+        this.cantidad_reinas = cantidad;
+    }
+    
+    public void setMascara(int numReinas){
+        this.mascara = new int[numReinas];
+        Random random = new Random();
+        for(int i=0;i<numReinas;i++){
+            this.mascara[i] = random.nextInt(2);
+        }
     }
     
 }
