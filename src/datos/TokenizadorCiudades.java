@@ -21,8 +21,8 @@ import javax.swing.JFileChooser;
 public class TokenizadorCiudades {
     
     private BufferedReader bufferLector;
-    private PrintWriter escritor;
-    private int cantidadCiudades;
+    private final PrintWriter escritor;
+    private final int cantidadCiudades;
 
     public TokenizadorCiudades(int cantidadCiudades) {
         this.bufferLector = null;
@@ -35,7 +35,7 @@ public class TokenizadorCiudades {
         int distancias[][] = new int[this.cantidadCiudades][this.cantidadCiudades];
         
         //Creamos un buffer para manipular el flujo
-        File nuevoArchivo = new File("C:\\Users\\depot\\desktop\\"+this.cantidadCiudades + ".txt");
+        File nuevoArchivo = new File("C:\\"+this.cantidadCiudades + ".txt");
         FileReader fr = new FileReader(nuevoArchivo);
         this.bufferLector = new BufferedReader(fr);
         String textoAcumulado = "", textoLeido = "";
