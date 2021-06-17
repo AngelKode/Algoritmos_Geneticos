@@ -7,7 +7,10 @@ package algoritmos_geneticos;
 
 import Damas.Damas;
 import TSP.TSP;
+import UI.JFrameHilos;
+import _3SAT._3SAT;
 import datos.Tokenizador;
+import datos.Tokenizador3SAP;
 import datos.TokenizadorCiudades;
 import graficador.Graficador;
 import java.io.IOException;
@@ -27,7 +30,7 @@ public class Algoritmos_Geneticos {
      */
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         // TODO code application logic here
-        
+        /*
         System.out.println("Calculando...");
         TSP tsp = new TSP();
         
@@ -61,10 +64,12 @@ public class Algoritmos_Geneticos {
         frameGrafica.setLocationRelativeTo(null);
         frameGrafica.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameGrafica.add(graficador.getChartPanel());
-         
+         */
         
+        //_3SAT sat = new _3SAT();
+        //sat.evolucionarDamas(100, 10000, 0.45, 0.20,100);
         
-       
+        JFrameHilos hilos = new JFrameHilos();
         
     }
     

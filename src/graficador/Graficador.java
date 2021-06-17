@@ -57,23 +57,22 @@ public class Graficador{
         this.dataSet.addSeries((XYSeries) serieAux.clone());
         this.cantidad_series++;//Aumentamos la cantidad de series
     }
-    public void initGraph(){
-        createJFreeChart();//Creamos el JFreeChart
+    public void initGraph(String titulo, String label_x, String label_y){
+        createJFreeChart(titulo, label_x, label_y);//Creamos el JFreeChart
     }
     
-    
-    private void createJFreeChart(){
-        this.xyChart = ChartFactory.createXYLineChart("Histograma",
-                                                      "N reinas",
-                                                      "Tiempo ejecución (ms)",
+    private void createJFreeChart(String titulo, String label_x, String label_y){
+        this.xyChart = ChartFactory.createXYLineChart(titulo,
+                                                      label_x,
+                                                      label_y,
                                                       this.dataSet,
                                                       PlotOrientation.VERTICAL,
-                                                      true,true,false);
+                                                      false,false,false);
         setColorGraph();
         this.panel = new ChartPanel(this.xyChart);
     }
 
-    private void setColorGraph() {
+    public void setColorGraph() {
         XYPlot plot = this.xyChart.getXYPlot();
         XYLineAndShapeRenderer render = new XYLineAndShapeRenderer();
         for(int serie = 0; serie < this.cantidad_series;serie++){
@@ -86,5 +85,8 @@ public class Graficador{
         plot.setRenderer(render);
     }
     
+    public void removeAll(){
+        this.dataSet.removeAllSeries();
+    }
     
 }

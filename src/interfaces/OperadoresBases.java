@@ -18,6 +18,8 @@ public interface OperadoresBases{
     public Object getMejorIndividuo() throws CloneNotSupportedException;
     public void generarPoblacionAleatoria(int tamPoblacion);
     public static int[] obtenerGenotipoAleatorio(int max,int numBits){
+        
+        /*FOR TSP
         int[] genotipo = new int[numBits];
         for(int posicion = 0; posicion < numBits; posicion++){
             genotipo[posicion] = -1;
@@ -31,6 +33,14 @@ public interface OperadoresBases{
                     j = -1;
                 }
             }
+            genotipo[i] = nuevo;
+        }
+        */
+        
+        int[] genotipo = new int[numBits];
+        Random aleatorio = new Random();
+        for(int i = 0; i < numBits ; i++){
+            int nuevo = aleatorio.nextInt(2);
             genotipo[i] = nuevo;
         }
         return genotipo;
