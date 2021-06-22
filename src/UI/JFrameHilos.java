@@ -31,6 +31,7 @@ public class JFrameHilos extends JFrame{
     
     public JFrameHilos() throws CloneNotSupportedException{
         initComponents();
+        System.out.println("a");
     }
     
     private void initComponents() throws CloneNotSupportedException{
@@ -137,7 +138,7 @@ public class JFrameHilos extends JFrame{
             panelPrincipalConfiguraciones.add(panelTituloConfiguraciones, BorderLayout.NORTH);
             panelPrincipalConfiguraciones.add(panelConfiguraciones, BorderLayout.CENTER);
         //Panel Botones
-        _3SAT sat = new _3SAT(100, 10000, 0.45, 0.20,100,tablaResultados, grafica);
+        _3SAT sat = new _3SAT(100, 5000, 0.75, 0.09,150,tablaResultados, grafica);
         panelBotones = new JPanel();
             btnAplicar.addActionListener(new ListenerAplicarCambios(txtNumGeneraciones,txtNumeroPoblacion,txtProbCruza,txtProbMuta, sat));
             btnReiniciarEvolucion.addActionListener(new ListenerAplicarCambios(txtNumGeneraciones,txtNumeroPoblacion,txtProbCruza,txtProbMuta, sat));

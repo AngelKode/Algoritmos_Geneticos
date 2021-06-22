@@ -19,7 +19,7 @@ public interface OperadoresBases{
     public void generarPoblacionAleatoria(int tamPoblacion);
     public static int[] obtenerGenotipoAleatorio(int max,int numBits){
         
-        /*FOR TSP
+        //FOR TSP
         int[] genotipo = new int[numBits];
         for(int posicion = 0; posicion < numBits; posicion++){
             genotipo[posicion] = -1;
@@ -35,14 +35,14 @@ public interface OperadoresBases{
             }
             genotipo[i] = nuevo;
         }
-        */
         
-        int[] genotipo = new int[numBits];
-        Random aleatorio = new Random();
-        for(int i = 0; i < numBits ; i++){
-            int nuevo = aleatorio.nextInt(2);
-            genotipo[i] = nuevo;
-        }
+        //FOR 3SAT
+//        int[] genotipo = new int[numBits];
+//        Random aleatorio = new Random();
+//        for(int i = 0; i < numBits ; i++){
+//            int nuevo = aleatorio.nextInt(2);
+//            genotipo[i] = nuevo;
+//        }
         return genotipo;
     }
     public int obtenerIndividuoAleatorio(int maximo);

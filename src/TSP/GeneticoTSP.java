@@ -19,6 +19,7 @@ public class GeneticoTSP implements GeneticoBases,Cloneable{
     private long fenotipo;
     private long fitness;
     private int matrizDistancias[][];
+   
 
     public GeneticoTSP(int genotipo[]) throws IOException {
         this.genotipo = genotipo;

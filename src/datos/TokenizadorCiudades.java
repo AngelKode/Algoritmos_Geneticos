@@ -35,7 +35,7 @@ public class TokenizadorCiudades {
         int distancias[][] = new int[this.cantidadCiudades][this.cantidadCiudades];
         
         //Creamos un buffer para manipular el flujo
-        File nuevoArchivo = new File("C:\\"+this.cantidadCiudades + ".txt");
+        File nuevoArchivo = new File("C:\\Users\\200an\\Desktop\\prueba"+this.cantidadCiudades+".txt");
         FileReader fr = new FileReader(nuevoArchivo);
         this.bufferLector = new BufferedReader(fr);
         String textoAcumulado = "", textoLeido = "";

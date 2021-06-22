@@ -10,21 +10,39 @@ import static interfaces.OperadoresBases.obtenerGenotipoAleatorio;
 import static interfaces.OperadoresBases.probabilidadMuta;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author depot
+ * @author Angel
  */
-public class OperadoresTSP implements OperadoresBases{
+public class OperadoresTSP implements OperadoresBases, Runnable{
     
-    private final ArrayList<GeneticoTSP> individuos;
+    private ArrayList<GeneticoTSP> individuos, nuevosIndividuos;
     private int[] mascara;
     private int individuoEscogido;
     private int cantidadCiudades;
+    private ArrayList<Long> tiemposOperacion;
+    private int cantidadPoblacion, numeroGeneraciones;
+    private double probabilidadCruza, probabilidadMuta;
+    private boolean getMejorIndividuo, isEvolucionando, isChangingPoblacion, canChangePoblacion;
+    private DefaultTableModel modelo;
 
-    public OperadoresTSP() {
+    public OperadoresTSP(int poblacion, int generaciones, double probabilidad_cruza, double probabilidad_muta) {
         this.individuos = new ArrayList<>();
+        this.nuevosIndividuos = new ArrayList<>();
+        this.cantidadPoblacion = poblacion;
+        this.numeroGeneraciones = generaciones;
+        this.probabilidadCruza = probabilidad_cruza;
+        this.probabilidadMuta = probabilidad_muta;
+        this.getMejorIndividuo = false;
+        this.isEvolucionando = false;
+        this.isChangingPoblacion = false;
+        this.canChangePoblacion = false;
     }
     
      @Override
@@ -124,56 +142,7 @@ public class OperadoresTSP implements OperadoresBases{
 
     @Override
     public void evolucion(int poblacion, int generaciones, double probabilidad_cruza, double probabilidad_muta) throws CloneNotSupportedException {
-        generarPoblacionAleatoria(poblacion);//Generamos poblaciones aleatorias
         
-        System.out.println("Evolucionando...");
-        for(int numGeneracion = 0;numGeneracion < generaciones;numGeneracion++){
-            System.out.println(numGeneracion);
-            GeneticoTSP[] nueva_poblacion = new GeneticoTSP[poblacion];//La siguiente generacion
-            for(int individuo = 0; individuo < poblacion; individuo++){
-                
-                //Cruzamos a los padres
-                //Pero hasta que la probabilidad de cruza sea mayor
-                GeneticoTSP hijo = null;
-                try {
-                    hijo = new GeneticoTSP(new int[this.mascara.length]);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                
-                double p;
-                do{
-                    p = Math.random();
-                    //Escogemos 2 individuos aleatorios
-                    obtenerIndividuoAleatorio(this.individuos.size());
-                    GeneticoTSP padre = (GeneticoTSP) this.individuos.get(this.individuoEscogido).clone();
-                    obtenerIndividuoAleatorio(this.individuos.size());
-                    GeneticoTSP madre = (GeneticoTSP) this.individuos.get(this.individuoEscogido).clone();
-                    this.individuoEscogido = -1;//Para saber que ya escogimos los 2
-                    
-                    //Creamos el nuevo hijo que salga de la cruza entre el padre y la madre
-                    try {
-                        hijo = new GeneticoTSP(cruza(padre,madre));
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                    
-                }while(p > probabilidad_cruza);//Seguimos ciclando hasta que esos 2 individuos puedan cruzarse
-                
-                //Una vez teniendo al hijo, vemos si muta o no
-                if(probabilidadMuta(probabilidad_muta)){
-                    muta(hijo,this.mascara.length);
-                }
-                
-                //Agregamos al hijo y le obtenemos el fitness
-                hijo.obtenerFitness();
-                nueva_poblacion[individuo] = hijo;
-            }
-            //Actualizamos la poblacion que generamos
-            for(int numIndividuo = 0; numIndividuo < poblacion;numIndividuo++){
-                this.individuos.set(numIndividuo, (GeneticoTSP) nueva_poblacion[numIndividuo].clone());
-            }
-        }
     }
 
     @Override
@@ -235,6 +204,147 @@ public class OperadoresTSP implements OperadoresBases{
             }
         }
     }
-   
     
+    public int getCantidadCiudades(){
+        return this.cantidadCiudades;
+    }
+    
+    public ArrayList<Long> getTiemposEjecucion(){
+        return this.tiemposOperacion;
+    }
+
+    @Override
+    public void run(){
+        //Inicializo el arreglo de los tiempos de operacion
+        this.tiemposOperacion = new ArrayList<>();
+        this.isEvolucionando = true;
+        generarPoblacionAleatoria(this.cantidadPoblacion);//Generamos poblaciones aleatorias
+
+        //Creo 2 variables para guardar el tiempo inicial y total de ejecuión
+        long tiempoInicial, tiempoTotal;
+        
+        for(int numGeneracion = 0;numGeneracion < this.numeroGeneraciones;numGeneracion++){
+            if(this.isChangingPoblacion){//Checamos si se va a cambiar la poblacion
+                try {
+                    switchPoblacion();
+                } catch (IOException ex) {
+                } catch (CloneNotSupportedException ex) {}
+            }
+            while(this.isChangingPoblacion){}
+            this.canChangePoblacion = false;
+            tiempoInicial = System.currentTimeMillis();//Obtengo el tiempo inicial
+            GeneticoTSP[] nueva_poblacion = new GeneticoTSP[this.cantidadPoblacion];//La siguiente generacion
+            for(int individuo = 0; individuo < this.cantidadPoblacion; individuo++){
+                
+                //Cruzamos a los padres
+                //Pero hasta que la probabilidad de cruza sea mayor
+                GeneticoTSP hijo = null;
+                try {
+                    hijo = new GeneticoTSP(new int[this.mascara.length]);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                
+                double p;
+                do{
+                    p = Math.random();
+                    //Escogemos 2 individuos aleatorios
+                    obtenerIndividuoAleatorio(this.individuos.size());
+                    GeneticoTSP padre = null;
+                    GeneticoTSP madre = null;
+                    try {
+                        padre = (GeneticoTSP) this.individuos.get(this.individuoEscogido).clone();
+                        obtenerIndividuoAleatorio(this.individuos.size());
+                        madre = (GeneticoTSP) this.individuos.get(this.individuoEscogido).clone();
+                        this.individuoEscogido = -1;//Para saber que ya escogimos los 2
+                    } catch (CloneNotSupportedException e) {}
+                    
+                    
+                    
+                    //Creamos el nuevo hijo que salga de la cruza entre el padre y la madre
+                    try {
+                        hijo = new GeneticoTSP(cruza(padre,madre));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } catch(CloneNotSupportedException e){
+                        
+                    }
+                    
+                }while(p > this.probabilidadCruza);//Seguimos ciclando hasta que esos 2 individuos puedan cruzarse
+                
+                //Una vez teniendo al hijo, vemos si muta o no
+                if(probabilidadMuta(this.probabilidadMuta)){
+                    muta(hijo,this.mascara.length);
+                }
+                
+                //Agregamos al hijo y le obtenemos el fitness
+                hijo.obtenerFitness();
+                nueva_poblacion[individuo] = hijo;
+            }
+            //Actualizamos la poblacion que generamos
+            try {
+                for(int numIndividuo = 0; numIndividuo < this.cantidadPoblacion;numIndividuo++){
+                    if(numIndividuo<this.cantidadPoblacion){
+                        this.individuos.set(numIndividuo, (GeneticoTSP) nueva_poblacion[numIndividuo].clone());
+                    }  
+                }
+            } catch (CloneNotSupportedException e) {}
+            this.canChangePoblacion = true;
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(OperadoresTSP.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            //Obtengo el tiempo total
+            tiempoTotal = System.currentTimeMillis() - tiempoInicial;
+            this.tiemposOperacion.add(tiempoTotal);
+            try {
+                this.modelo.addRow(new Object[]{numGeneracion,Arrays.toString(this.getMejorIndividuo().getGenotipo()),this.getMejorIndividuo().getFitness()});
+            } catch (CloneNotSupportedException ex) {}
+        }
+        this.isEvolucionando = false;
+    }
+    
+    public boolean isEvolucionandoGenetico(){
+        return this.isEvolucionando;
+    }
+    
+    public void setModelToUpdate(DefaultTableModel modelo){
+        this.modelo = modelo;
+    }
+    
+    public void switchPoblacion() throws IOException, CloneNotSupportedException{
+        if(this.individuos.size() > this.nuevosIndividuos.size()){
+            //Si es mayor el tamaño, llenamos con el que se manda y los demás aleatorios
+            this.individuos.clear();
+            for(int i=0;i < this.nuevosIndividuos.size();i++){
+               this.individuos.add((GeneticoTSP) this.nuevosIndividuos.get(i).clone());
+            }
+            int siguientePosicion = this.cantidadPoblacion - (this.cantidadPoblacion - this.nuevosIndividuos.size());
+            for(int pos = siguientePosicion;pos<this.cantidadPoblacion;pos++){
+                this.individuos.add(new GeneticoTSP(obtenerGenotipoAleatorio(this.cantidadCiudades,this.cantidadCiudades)));
+            }
+        }else if(this.individuos.size() < this.nuevosIndividuos.size()){
+            //Si es menor, llenamos hasta que sea el limite
+            this.individuos.clear();
+            for(int i=0;i<this.cantidadPoblacion;i++){
+               this.individuos.add((GeneticoTSP) this.nuevosIndividuos.get(i).clone());
+            }
+        }else{
+            this.individuos = (ArrayList<GeneticoTSP>) nuevosIndividuos.clone();
+        }
+        
+        this.isChangingPoblacion = false;  
+    }
+    
+    public void setNuevaPoblacion(ArrayList<GeneticoTSP> nuevos){
+        System.out.println(nuevos.size());
+        System.out.println(this.individuos.size());
+        this.isChangingPoblacion = true;
+        this.nuevosIndividuos = (ArrayList<GeneticoTSP>) nuevos.clone();
+    }
+    public ArrayList<GeneticoTSP> getPoblacion(){
+        return this.individuos;
+    }
 }

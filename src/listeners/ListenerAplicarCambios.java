@@ -19,7 +19,8 @@ public class ListenerAplicarCambios implements ActionListener{
     JTextField numGen, numPob, probCruza, probMuta;
     _3SAT manipulador;
     
-    public ListenerAplicarCambios(JTextField txtNumGeneraciones,JTextField txtNumeroPoblacion,JTextField txtProbCruza,JTextField txtProbMuta, _3SAT sat) {
+    public ListenerAplicarCambios(JTextField txtNumGeneraciones,
+                                  JTextField txtNumeroPoblacion,JTextField txtProbCruza,JTextField txtProbMuta, _3SAT sat) {
         this.numGen = txtNumGeneraciones;
         this.numPob = txtNumeroPoblacion;
         this.probCruza = txtProbCruza;
@@ -31,7 +32,6 @@ public class ListenerAplicarCambios implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Aplicar")){
-            System.out.println("Quiere cambiar...");
             if(!this.numGen.getText().equals("")){
                 this.manipulador.setGeneraciones(Integer.parseInt(this.numGen.getText()));
             }

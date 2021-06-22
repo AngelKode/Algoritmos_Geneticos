@@ -25,11 +25,10 @@ public class Genetico3SAT implements GeneticoBases,Cloneable{
         this.genotipo = genotipo;
         this.fenotipo = 0;
         this.fitness = 0;
-        this.elementosPrueba = new Tokenizador3SAP(500).leerDatos();
+        this.elementosPrueba = new Tokenizador3SAP(550).leerDatos();
     }
     
     @Override
-    @SuppressWarnings("empty-statement")
     public void obtenerFitness() {
         //Vamos a calcular el fitness de cada invididuo de acuerdo a la cantidad de satisfacibilidad booleana
         //El número total es el máximo, y si un elemento no cumple, se le va restando

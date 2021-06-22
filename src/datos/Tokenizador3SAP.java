@@ -35,7 +35,7 @@ public class Tokenizador3SAP {
         ArrayList<int[]> instanciasPrueba = new ArrayList<>();
         
         //Creamos un buffer para manipular el flujo
-        File nuevoArchivo = new File("C:\\Users\\depot\\desktop\\G2-100-"+this.cantidadElementos + "-1.txt");
+        File nuevoArchivo = new File("C:\\Users\\200an\\Desktop\\G2-100-"+this.cantidadElementos + "-3.txt");   
         FileReader fr = new FileReader(nuevoArchivo);
         this.bufferLector = new BufferedReader(fr);
         String textoAcumulado = "", textoLeido = "";
@@ -65,7 +65,7 @@ public class Tokenizador3SAP {
         }
         //Agregamos el ultimo elemento de prueba
         instanciasPrueba.add(pruebas.clone());
-        
+        fr.close();
         return instanciasPrueba;
     }
 }
